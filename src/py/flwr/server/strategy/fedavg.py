@@ -16,7 +16,7 @@
 
 Paper: arxiv.org/abs/1602.05629
 """
-
+import wandb
 
 from logging import WARNING
 from typing import Callable, Dict, List, Optional, Tuple, Union
@@ -132,6 +132,15 @@ class FedAvg(Strategy):
         self.fit_metrics_aggregation_fn = fit_metrics_aggregation_fn
         self.evaluate_metrics_aggregation_fn = evaluate_metrics_aggregation_fn
         self.inplace = inplace
+        wandb.init(
+             project="Plane_centralized",
+             name="Federated_central_server",
+             config={
+                   "model":"federado-resnet152",
+                   "dataset":"African Data set",
+                   "epochs":616}
+        )
+        print("iniciado")
 
     def __repr__(self) -> str:
         """Compute a string representation of the strategy."""
@@ -273,7 +282,6 @@ class FedAvg(Strategy):
                 for _, evaluate_res in results
             ]
         )
-
         # Aggregate custom metrics if aggregation fn was provided
         metrics_aggregated = {}
         if self.evaluate_metrics_aggregation_fn:
@@ -281,5 +289,6 @@ class FedAvg(Strategy):
             metrics_aggregated = self.evaluate_metrics_aggregation_fn(eval_metrics)
         elif server_round == 1:  # Only log this warning once
             log(WARNING, "No evaluate_metrics_aggregation_fn provided")
+        wandb.log({"acc":metrics_aggregated,"loss":loss_aggregated})
 
         return loss_aggregated, metrics_aggregated
