@@ -180,6 +180,8 @@ class SimpleClientManager(ClientManager):
         min_num_clients: Optional[int] = None,
         criterion: Optional[Criterion] = None,
     ) -> List[ClientProxy]:
+    # Esto solo lee el numero de clientes, ve cuales estan 
+    # disponibles y te devuelve un random.sample(clientes_disp,numero_muestra)
         """Sample a number of Flower ClientProxy instances."""
         # Block until at least num_clients are connected.
         if min_num_clients is None:
